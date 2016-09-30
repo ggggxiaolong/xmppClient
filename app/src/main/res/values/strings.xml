@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">xmpp</string>
+
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="prompt_sign_up">Sign Up</string>
+    <string name="prompt_forgot_password">Forgot password?</string>
+    <string name="prompt_password">password</string>
+    <string name="prompt_username">username</string>
+    <string name="prompt_server">server</string>
 </resources>

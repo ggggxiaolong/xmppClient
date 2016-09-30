@@ -2,7 +2,7 @@ package com.github.ggggxiaolong.xmpp;
 
 import android.app.Application;
 
-import com.github.ggggxiaolong.xmpp.utils.ApplicationContextHolder;
+import com.github.ggggxiaolong.xmpp.utils.ObjectHolder;
 
 import timber.log.Timber;
 
@@ -18,7 +18,7 @@ public class App extends Application {
         if (BuildConfig.DEBUG){
             Timber.plant(new Timber.DebugTree());
         }
-        ApplicationContextHolder.context = getApplicationContext();
+        ObjectHolder.context = getApplicationContext();
     }
 
 }

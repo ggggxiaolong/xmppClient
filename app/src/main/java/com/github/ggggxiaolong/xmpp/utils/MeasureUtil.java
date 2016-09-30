@@ -13,13 +13,13 @@ public final class MeasureUtil {
 
     public static int[] getScreenSize() {
         DisplayMetrics metrics = new DisplayMetrics();
-        WindowManager windowManager = (WindowManager) ApplicationContextHolder.context.getSystemService(Context.WINDOW_SERVICE);
+        WindowManager windowManager = (WindowManager) ObjectHolder.context.getSystemService(Context.WINDOW_SERVICE);
         windowManager.getDefaultDisplay().getMetrics(metrics);
         return new int[]{metrics.widthPixels, metrics.heightPixels};
     }
 
     public static int dip2px(float dpValue) {
-        final float scale = ApplicationContextHolder.context.getResources().getDisplayMetrics().density;
+        final float scale = ObjectHolder.context.getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale + 0.5f);
     }
 }

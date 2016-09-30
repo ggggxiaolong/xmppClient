@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.github.ggggxiaolong.xmpp">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -12,14 +14,25 @@
         <activity
             android:name=".splash.SplashActivity"
             android:theme="@style/SplashTheme">
+            <!--<intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>-->
+        </activity>
+        <activity android:name=".MainActivity"/>
+        <activity android:name=".user.LoginActivity"/>
+
+        <service android:name=".service.XMPPService"/>
+
+        <activity android:name=".setting.SetServerActivity"
+            android:theme="@style/AppTheme.Translucent.Setting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"/>
-        <activity android:name=".user.LoginActivity"/>
     </application>
 
 </manifest>
