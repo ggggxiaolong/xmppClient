@@ -19,14 +19,14 @@ public final class InternetReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {
         //连接服务器，唤醒服务
-        if (Common.isNetworkAvailable(context)) {
+        if (Common.isNetworkAvailable(context) && !XMPPUtil.isConnected()) {
             Timber.i("internet is connected");
             ThreadUtil.runONWorkThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
                         if (XMPPUtil.connect(null)) {
-
+                            XMPPUtil.login();
                             context.startService(new Intent(context, XMPPService.class));
                         }
                     } catch (Exception e) {
