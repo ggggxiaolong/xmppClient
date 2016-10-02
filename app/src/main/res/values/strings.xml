@@ -1,12 +1,19 @@
 <resources>
-    <string name="app_name">xmpp</string>
+    <string name="app_name">畅聊</string>
 
-    <string name="title_activity_splash">SplashActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <!-- 转场动画属性名 -->
+    <string name="transition_server_setting" translatable="false">transition_server_setting</string>
+
     <string name="prompt_sign_up">Sign Up</string>
     <string name="prompt_forgot_password">Forgot password?</string>
     <string name="prompt_password">password</string>
     <string name="prompt_username">username</string>
     <string name="prompt_server">server</string>
+    <string name="prompt_set_server">Set Server</string>
+    <string name="prompt_server_address">ServerAddress</string>
+    <string name="prompt_server_name">ServerName</string>
+    <string name="prompt_server_port">ServerPort</string>
+
+    <string name="action_cancle">cancle</string>
+    <string name="action_confirm">sure</string>
 </resources>

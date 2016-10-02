@@ -5,12 +5,18 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 
+import com.github.ggggxiaolong.xmpp.utils.CommonField;
+import com.github.ggggxiaolong.xmpp.utils.JobUtil;
 import com.github.ggggxiaolong.xmpp.utils.ObjectHolder;
 import com.github.ggggxiaolong.xmpp.utils.ThreadUtil;
+import com.github.ggggxiaolong.xmpp.utils.XMPPUtil;
 
+import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatManager;
 import org.jivesoftware.smack.chat.ChatManagerListener;
@@ -31,20 +37,22 @@ public class XMPPService extends Service {
 
     private ChatManager mChatManager;
     private Roster mRoster;
+    private LocalBroadcastManager mBroadcastManager;
 
     @Override
     public void onCreate() {
-        Timber.i("tservice is create");
+        mBroadcastManager = ObjectHolder.getBroadcastManager();
         Timber.i("service on create");
-        if (ObjectHolder.connection == null) {
+        if (!XMPPUtil.isConnected()) {
             Timber.e("XMPP connection was not connected!");
             return;
         }
+
         ThreadUtil.runONWorkThread(new Runnable() {
             @Override
             public void run() {
                 Timber.i("同步花名册");
-                mRoster = Roster.getInstanceFor(ObjectHolder.connection);
+                mRoster = Roster.getInstanceFor(XMPPUtil.connection);
                 Set<RosterEntry> entries = mRoster.getEntries();
                 for (RosterEntry entry : entries) {
                     Timber.i("groups : %s ;", entry.getGroups().get(0).getName());
@@ -57,16 +65,18 @@ public class XMPPService extends Service {
 
                 mRoster.addRosterListener(mRosterListener);
                 //监听消息的改变
-                mChatManager = ChatManager.getInstanceFor(ObjectHolder.connection);
+                mChatManager = ChatManager.getInstanceFor(XMPPUtil.connection);
 
                 mChatManager.addChatListener(mChatManagerListener);
 
-                ObjectHolder.connection.addAsyncStanzaListener(new StanzaListener() {
+                XMPPUtil.connection.addAsyncStanzaListener(new StanzaListener() {
                     @Override
                     public void processPacket(Stanza packet) throws SmackException.NotConnectedException {
                         Timber.i(packet.toString());
                     }
                 }, null);
+
+                XMPPUtil.connection.addConnectionListener(mConnectionListener);
             }
         });
         super.onCreate();
@@ -153,4 +163,53 @@ public class XMPPService extends Service {
             Timber.i("会话内容：%s", message.getBody());
         }
     };
+    private ConnectionListener mConnectionListener = new ConnectionListener() {
+        @Override
+        public void connected(XMPPConnection connection) {
+            //连接到服务器成功
+            Timber.i("server connected success");
+            mBroadcastManager.sendBroadcast(new Intent(CommonField.RECEIVER_CONNECTED));
+            JobUtil.closeConnectJob();
+        }
+
+        @Override
+        public void authenticated(XMPPConnection connection, boolean resumed) {
+            //登陆成功
+            Timber.i("server login");
+            mBroadcastManager.sendBroadcast(new Intent(CommonField.RECEIVER_LOGIN));
+        }
+
+        @Override
+        public void connectionClosed() {
+            Timber.i("server disconnected");
+            //连接断开
+        }
+
+        @Override
+        public void connectionClosedOnError(Exception e) {
+            Timber.i("server disconnected by error : %s", e);
+            //异常断开
+            //如果系统版本大于21（5.0）执行连接任务
+            //否则通过广播连接
+            JobUtil.startConnectJob();
+        }
+
+        @Override
+        public void reconnectionSuccessful() {
+            //重连成功
+            Timber.i("server reconnected success");
+        }
+
+        @Override
+        public void reconnectingIn(int seconds) {
+
+        }
+
+        @Override
+        public void reconnectionFailed(Exception e) {
+            //重连失败
+            Timber.i("server reconnected fail");
+        }
+    };
+
 }

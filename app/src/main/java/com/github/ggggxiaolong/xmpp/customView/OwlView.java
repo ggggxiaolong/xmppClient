@@ -106,7 +106,7 @@ public final class OwlView extends View {
         } else {
             width = (int) (height / 3.0f * 5);
         }
-        Timber.i("height =  %d; width = %d", height, width);
+//        Timber.i("height =  %d; width = %d", height, width);
         int mode = MeasureSpec.getMode(widthMeasureSpec);
         switch (mode) {
             case MeasureSpec.AT_MOST: {

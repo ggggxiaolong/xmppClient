@@ -9,9 +9,9 @@
         <item name="android:windowBackground">@color/background_light</item>
         <item name="android:textColorHint">@color/hint_disabled_dark</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:windowAllowEnterTransitionOverlap">true</item>
+        <!--<item name="android:windowAllowEnterTransitionOverlap">true</item>
         <item name="android:windowAllowReturnTransitionOverlap">true</item>
-        <item name="android:windowSharedElementsUseOverlay">false</item>
+        <item name="android:windowSharedElementsUseOverlay">false</item>-->
     </style>
 
     <!-- 用于显示部分内容的布局，类似dialog -->

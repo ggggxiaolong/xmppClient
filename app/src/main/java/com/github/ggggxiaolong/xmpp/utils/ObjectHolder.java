@@ -1,6 +1,7 @@
 package com.github.ggggxiaolong.xmpp.utils;
 
 import android.content.Context;
+import android.support.v4.content.LocalBroadcastManager;
 
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 
@@ -11,5 +12,17 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
  */
 public final class ObjectHolder {
     public static Context context;
-    public static XMPPTCPConnection connection;
+
+    private static LocalBroadcastManager mManager;
+
+    public static LocalBroadcastManager getBroadcastManager() {
+        if (mManager == null) {
+            synchronized (ObjectHolder.class) {
+                if (mManager == null)
+                    mManager = LocalBroadcastManager.getInstance(context);
+            }
+        }
+        return mManager;
+    }
+
 }
