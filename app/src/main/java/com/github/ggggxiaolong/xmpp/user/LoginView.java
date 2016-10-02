@@ -9,5 +9,5 @@ import com.github.ggggxiaolong.xmpp.base.BaseView;
 public interface LoginView extends BaseView {
     void loginSuccess();
     void loginFail();
-    void serverAddressError();
+    void connect();
 }
