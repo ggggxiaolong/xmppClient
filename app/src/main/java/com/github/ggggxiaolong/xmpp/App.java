@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.github.ggggxiaolong.xmpp.utils.ObjectHolder;
 
+import im.fir.sdk.FIR;
 import timber.log.Timber;
 
 /**
@@ -18,6 +19,7 @@ public class App extends Application {
         if (BuildConfig.DEBUG){
             Timber.plant(new Timber.DebugTree());
         }
+        FIR.init(this);
         ObjectHolder.context = getApplicationContext();
     }
 
