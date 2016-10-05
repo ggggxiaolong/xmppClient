@@ -96,36 +96,17 @@ public final class OwlView extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int width = MeasureSpec.getSize(widthMeasureSpec);
-        int height = MeasureSpec.getSize(heightMeasureSpec);
-
+        int measureWidth = MeasureUtil.getMeasureSize(widthMeasureSpec, expectWidth);
+        int measureHeight = MeasureUtil.getMeasureSize(heightMeasureSpec, expectHeight);
         //修正view的宽高比（如果宽高比不同则将测量值等比缩小）
-        float temp = width / 5.0f * 3;
-        if (temp < height) {
-            height = (int) temp;
+        float temp = measureWidth / 5.0f * 3;
+        if (temp < measureHeight) {
+            measureHeight = (int) temp;
         } else {
-            width = (int) (height / 3.0f * 5);
+            measureWidth = (int) (measureHeight / 3.0f * 5);
         }
-//        Timber.i("height =  %d; width = %d", height, width);
-        int mode = MeasureSpec.getMode(widthMeasureSpec);
-        switch (mode) {
-            case MeasureSpec.AT_MOST: {
-                if (expectHeight > height) {
-                    setMeasuredDimension(expectWidth, expectHeight);
-                } else {
-                    setMeasuredDimension(width, height);
-                }
-                break;
-            }
-            case MeasureSpec.EXACTLY: {
-                setMeasuredDimension(width, height);
-                break;
-            }
-            case MeasureSpec.UNSPECIFIED: {
-                setMeasuredDimension(expectWidth, expectHeight);
-                break;
-            }
-        }
+        Timber.i("height =  %d; width = %d", measureHeight, measureWidth);
+        setMeasuredDimension(measureWidth, measureHeight);
     }
 
     @Override
