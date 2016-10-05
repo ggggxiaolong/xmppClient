@@ -11,48 +11,29 @@ import timber.log.Timber;
 public class ServerPresenter extends BasePresenter<ServerView> {
 
     void Connect(final String name, final String address, final int port) {
-        ThreadUtil.runONWorkThread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    XMPPUtil.connect(name, address, port, null);
-                    saveConfig(name, address, port);
-                    ThreadUtil.runOnUIThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mView.connectSuccess();
-                        }
-                    });
-                } catch (Exception e) {
-                    Timber.e(e);
+        ThreadUtil.runONWorkThread(() -> {
+            try {
+                XMPPUtil.connect(name, address, port, null);
+                saveConfig(name, address, port);
+                ThreadUtil.runOnUIThread(() -> mView.connectSuccess());
+            } catch (Exception e) {
+                Timber.e(e);
+                ThreadUtil.runOnUIThread(() -> {
                     mView.connectFail();
-                }
+                });
+
             }
         });
     }
 
     public void Connect() {
-        ThreadUtil.runONWorkThread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    XMPPUtil.connect(null);
-                    ThreadUtil.runOnUIThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mView.connectSuccess();
-                        }
-                    });
-
-                } catch (Exception e) {
-                    Timber.e(e);
-                    ThreadUtil.runOnUIThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            mView.connectFail();
-                        }
-                    });
-                }
+        ThreadUtil.runONWorkThread(() -> {
+            try {
+                XMPPUtil.connect(null);
+                ThreadUtil.runOnUIThread(() -> mView.connectSuccess());
+            } catch (Exception e) {
+                Timber.e(e);
+                ThreadUtil.runOnUIThread(() -> mView.connectFail());
             }
         });
     }
