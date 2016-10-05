@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingLeft="@dimen/spacing_normal"
+    android:paddingRight="@dimen/spacing_normal"
+    android:paddingTop="@dimen/spacing_normal"
+    >
+
+    <ImageView
+        android:id="@+id/avatar"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:scaleType="centerInside"
+        android:layout_alignParentRight="true"
+        tools:src="@drawable/avatar"/>
+
+    <TextView
+        android:id="@+id/content"
+        android:layout_toLeftOf="@id/avatar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/outgoing"
+        android:gravity="center_vertical"
+        android:paddingRight="20dp"
+        tools:text="不知道阿萨大"/>
+
+</RelativeLayout>
