@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_qun_chat"
+        android:title="@string/action_qunchat"
+        app:showAsAction="never"
+        android:icon="@drawable/ic_chat"
+        />
+    <item
+        android:id="@+id/menu_friend_add"
+        android:title="@string/action_friendAdd"
+        app:showAsAction="never"
+        android:icon="@drawable/ic_friend_add"
+        />
+    <item
+        android:id="@+id/menu_scan"
+        android:title="@string/action_scan"
+        app:showAsAction="never"
+        android:icon="@drawable/ic_scan"
+        />
+    <item
+        android:id="@+id/about"
+        android:title="@string/action_about"
+        app:showAsAction="never"
+        android:icon="@drawable/ic_about"
+        />
+</menu>
