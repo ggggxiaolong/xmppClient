@@ -18,6 +18,7 @@
     <string name="prompt_tab_found">发现</string>
     <string name="prompt_tab_me">我</string>
     <string name="prompt_tomorrow">昨天</string>
+    <string name="prompt_inCoding">正在开发中</string>
 
     <string name="action_cancle">cancle</string>
     <string name="action_confirm">sure</string>
