@@ -2,6 +2,7 @@ package com.github.ggggxiaolong.xmpp.utils;
 
 import android.content.Context;
 import android.util.DisplayMetrics;
+import android.view.View;
 import android.view.WindowManager;
 
 /**
@@ -21,5 +22,26 @@ public final class MeasureUtil {
     public static int dip2px(float dpValue) {
         final float scale = ObjectHolder.context.getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale + 0.5f);
+    }
+
+    public static int getMeasureSize(int measureSpec, int expect) {
+        int mode = View.MeasureSpec.getMode(measureSpec);
+        int size = View.MeasureSpec.getSize(measureSpec);
+        int measuredSize = 0;
+        switch (mode) {
+            case View.MeasureSpec.UNSPECIFIED: {
+                measuredSize = expect;
+                break;
+            }
+            case View.MeasureSpec.AT_MOST: {
+                measuredSize = Math.min(expect, size);
+                break;
+            }
+            case View.MeasureSpec.EXACTLY: {
+                measuredSize = size;
+                break;
+            }
+        }
+        return measuredSize;
     }
 }
