@@ -12,6 +12,7 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
  */
 public final class ObjectHolder {
     public static Context context;
+    public static String XMPP_ID ;
 
     private static LocalBroadcastManager mManager;
 
@@ -24,5 +25,6 @@ public final class ObjectHolder {
         }
         return mManager;
     }
+
 
 }
