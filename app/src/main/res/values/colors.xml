@@ -56,4 +56,5 @@
     <color name="designer_news_super_dark">#000133</color>
     <color name="designer_news_quote_line">#ffeceef1</color>
     <color name="designer_news_quote">#73000000</color>
+    <color name="tab_select">#11cd6e</color>
 </resources>

@@ -14,12 +14,23 @@ import android.net.NetworkInfo;
 import android.widget.EditText;
 
 import com.github.ggggxiaolong.xmpp.R;
+import com.github.promeg.pinyinhelper.Pinyin;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Common {
 
+    public static String toPinYin(String str) {
+        char[] chars = str.toCharArray();
+        StringBuilder sb = new StringBuilder();
+        for (char c : chars) {
+            sb.append(Pinyin.toPinyin(c));
+        }
+        return sb.toString();
+    }
 
     /**
      * check EditText is empty or not
@@ -124,6 +135,60 @@ public class Common {
                 .getSystemService(mContext.NOTIFICATION_SERVICE);
         // manager.notify(0, notification);
         manager.notify(R.string.app_name, notification);
+    }
+
+    /**
+     * calculate difference form two dates Note: both dates are in same format.
+     *
+     * @param mDate1 date 1
+     * @param mDate2 date 2
+     * @return date difference in long
+     */
+    public static long calculateDays(Date mDate1, Date mDate2) {
+        return Math.abs((mDate1.getTime() - mDate2.getTime()) / (24 * 60 * 60 * 1000) + 1);
+    }
+
+    /**
+     * 大于今天0点
+     */
+    public static boolean isToDay(Date date) {
+        DateFormat dateFormat = DateFormat.getDateInstance();
+        String format = dateFormat.format(new Date());
+        try {
+            Date today = dateFormat.parse(format);
+            return today.before(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
+
+    /**
+     * 小于今天0点，大于昨天0点
+     */
+    public static boolean isTomorrow(Date date) {
+        DateFormat dateFormat = DateFormat.getDateInstance();
+        String format = dateFormat.format(new Date());
+        try {
+            Date today = dateFormat.parse(format);
+            if (today.after(date)) {
+                today.setTime(today.getTime() - 24 * 60 * 60 * 1000);
+                return today.before(date);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static String getTime(Date date){
+        DateFormat dateFormat = DateFormat.getTimeInstance(DateFormat.SHORT);
+        return dateFormat.format(date);
+    }
+
+    public static String getDate(Date date){
+        DateFormat dateFormat = DateFormat.getDateInstance();
+        return dateFormat.format(date);
     }
 
 }

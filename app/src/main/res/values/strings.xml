@@ -13,7 +13,19 @@
     <string name="prompt_server_address">ServerAddress</string>
     <string name="prompt_server_name">ServerName</string>
     <string name="prompt_server_port">ServerPort</string>
+    <string name="prompt_tab_chat">会话</string>
+    <string name="prompt_tab_contact">通讯录</string>
+    <string name="prompt_tab_found">发现</string>
+    <string name="prompt_tab_me">我</string>
+    <string name="prompt_tomorrow">昨天</string>
 
     <string name="action_cancle">cancle</string>
     <string name="action_confirm">sure</string>
+    <string name="action_qunchat">发起群聊</string>
+    <string name="action_friendAdd">添加朋友</string>
+    <string name="action_scan">扫一扫</string>
+    <string name="action_about">关于</string>
+    <string name="action_send">发送</string>
+
+    <string name="error_send">error_send</string>
 </resources>
