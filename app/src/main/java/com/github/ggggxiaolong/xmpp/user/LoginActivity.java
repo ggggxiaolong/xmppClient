@@ -7,23 +7,34 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-import com.github.ggggxiaolong.xmpp.MainActivity;
+import com.github.ggggxiaolong.xmpp.chat.MainActivity;
 import com.github.ggggxiaolong.xmpp.R;
 import com.github.ggggxiaolong.xmpp.customView.OwlView;
 import com.github.ggggxiaolong.xmpp.service.XMPPService;
 import com.github.ggggxiaolong.xmpp.setting.ServerPresenter;
 import com.github.ggggxiaolong.xmpp.setting.ServerView;
 import com.github.ggggxiaolong.xmpp.setting.SetServerActivity;
+import com.github.ggggxiaolong.xmpp.utils.CommonField;
 import com.github.ggggxiaolong.xmpp.utils.FabTransform;
+import com.github.ggggxiaolong.xmpp.utils.PreferencesUtils;
 import com.sdsmdg.tastytoast.TastyToast;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import timber.log.Timber;
+
+import static android.text.TextUtils.isEmpty;
 
 public class LoginActivity extends AppCompatActivity implements LoginView, ServerView {
 
+    @BindView(R.id.login_pane)
+    ViewGroup mContainer;
+    @BindView(R.id.action_panel)
+    ViewGroup mActionPanel;
     private OwlView mOwlView;
     private EditText mUsernameEdit, mPasswordEdit;
     private View mLoginView;
@@ -35,6 +46,7 @@ public class LoginActivity extends AppCompatActivity implements LoginView, Serve
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        ButterKnife.bind(this);
         mOwlView = (OwlView) findViewById(R.id.owl);
         mUsernameEdit = (EditText) findViewById(R.id.username);
         mPasswordEdit = (EditText) findViewById(R.id.password);
@@ -49,6 +61,15 @@ public class LoginActivity extends AppCompatActivity implements LoginView, Serve
         mPresenter.onAttach(this);
         mServerPresenter = new ServerPresenter();
         mServerPresenter.onAttach(this);
+
+        initData();
+    }
+
+    private void initData() {
+        String username = PreferencesUtils.getString(CommonField.USER_NAME);
+        if (!isEmpty(username)){
+            mUsernameEdit.setText(username);
+        }
     }
 
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
