@@ -1,0 +1,26 @@
+import java.lang.Boolean;
+
+CREATE TABLE chat(
+    _id INTEGER PRIMARY KEY AUTOINCREMENT,
+    from_id TEXT NOT NULL,
+    content TEXT NOT NULL,
+    holder INTEGER AS Boolean DEFAULT 0 NOT NULL,
+    type TEXT,
+    time INTEGER NOT NULL
+);
+--分组查询最近的会话
+for_chat:
+SELECT *, max(time)
+FROM chat
+JOIN contact ON chat.from_id = contact.user_id
+GROUP BY from_id;
+
+--根据用户查询所有会话
+for_from_id:
+SELECT *
+FROM chat
+WHERE from_id = ?
+ORDER BY time ASC;
+
+delete_all:
+DELETE FROM chat;
