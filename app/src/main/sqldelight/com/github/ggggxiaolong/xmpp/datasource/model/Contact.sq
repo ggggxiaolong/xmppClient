@@ -1,0 +1,22 @@
+import java.lang.Integer;
+import org.jivesoftware.smack.packet.Presence;
+
+CREATE TABLE contact (
+    user_id TEXT NOT NULL PRIMARY KEY,
+    user_name TEXT ,
+    pinyin TEXT NOT NULL,
+    avatar TEXT,
+    p_status TEXT,
+    p_mode TEXT AS Presence.Mode,
+    p_type TEXT AS Presence.Type
+);
+
+select_user:
+SELECT *
+FROM contact
+WHERE user_id = ?;
+
+select_all:
+SELECT *
+FROM contact
+ORDER BY pinyin ASC;
