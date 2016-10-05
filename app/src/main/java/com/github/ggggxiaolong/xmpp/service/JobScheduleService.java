@@ -49,6 +49,7 @@ public final class JobScheduleService extends JobService {
                 case 1: {
                     try {
                         XMPPUtil.connect(null);
+                        XMPPUtil.login();
                     } catch (Exception e) {
                         Timber.e(e);
                     }
