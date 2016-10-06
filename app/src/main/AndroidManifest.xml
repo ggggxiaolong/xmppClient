@@ -28,12 +28,13 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".chat.MainActivity"/>
-        <activity android:name=".user.LoginActivity"/>
+        <activity android:name=".main.MainActivity"/>
+        <activity android:name=".user.LoginActivity"
+            android:windowSoftInputMode="stateHidden"/>
         <activity
             android:name=".setting.SetServerActivity"
             android:theme="@style/AppTheme.Translucent.Setting"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize|stateHidden">
         </activity>
 
         <service android:name=".service.XMPPService"/>

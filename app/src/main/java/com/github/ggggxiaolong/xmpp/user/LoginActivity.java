@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-import com.github.ggggxiaolong.xmpp.chat.MainActivity;
+import com.github.ggggxiaolong.xmpp.main.MainActivity;
 import com.github.ggggxiaolong.xmpp.R;
 import com.github.ggggxiaolong.xmpp.customView.OwlView;
 import com.github.ggggxiaolong.xmpp.service.XMPPService;

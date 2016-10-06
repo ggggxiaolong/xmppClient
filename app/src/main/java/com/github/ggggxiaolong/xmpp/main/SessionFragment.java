@@ -1,4 +1,4 @@
-package com.github.ggggxiaolong.xmpp.chat;
+package com.github.ggggxiaolong.xmpp.main;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -15,7 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.ggggxiaolong.xmpp.R;
-import com.github.ggggxiaolong.xmpp.datasource.model.Contact;
+import com.github.ggggxiaolong.xmpp.chat.ChatActivity;
+import com.github.ggggxiaolong.xmpp.datasource.model.Chat;
 import com.github.ggggxiaolong.xmpp.utils.CommonField;
 import com.github.ggggxiaolong.xmpp.utils.ObjectHolder;
 
@@ -23,18 +24,18 @@ import java.util.List;
 
 import timber.log.Timber;
 
-public final class ContactFragment extends Fragment {
+public final class SessionFragment extends Fragment {
 
     private RecyclerView mList;
     private LocalBroadcastManager mBroadcastManager;
-    private ContactAdapter mAdapter;
-    private List<Contact> mContacts;
+    private SessionAdapter mAdapter;
+    private List<Chat.Session> mData;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mList = (RecyclerView) inflater.inflate(R.layout.fragment_contact, container, false);
-        initData(container.getContext());
+        initData(inflater.getContext());
         return mList;
     }
 
@@ -42,14 +43,14 @@ public final class ContactFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         mBroadcastManager = ObjectHolder.getBroadcastManager();
-        mBroadcastManager.registerReceiver(mContactReceiver, new IntentFilter(CommonField.RECEIVER_CONTACT));
+        mBroadcastManager.registerReceiver(mContactReceiver, new IntentFilter(CommonField.RECEIVER_CHAT));
     }
 
     private void initData(Context ctx) {
-        mContacts = Contact.selectAll();
-        Timber.i("contact size: %s", mContacts.size());
-        mAdapter = new ContactAdapter();
-        mAdapter.setData(mContacts);
+        mData = Chat.getContextChat();
+        Timber.i("contact size: %s", mData.size());
+        mAdapter = new SessionAdapter();
+        mAdapter.setData(mData);
         mAdapter.setOnItemClickListener(mItemClickListener);
         mList.setAdapter(mAdapter);
         mList.setLayoutManager(new LinearLayoutManager(ctx));
@@ -61,13 +62,20 @@ public final class ContactFragment extends Fragment {
         super.onDetach();
     }
 
-    private BroadcastReceiver mContactReceiver = new BroadcastReceiver(){
+    private BroadcastReceiver mContactReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            List<Contact> contacts = Contact.selectAll();
-            mAdapter.setData(contacts);
-            mAdapter.notifyDataSetChanged();
+            if (intent.hasExtra(CommonField.INTENT_FORM) && intent.hasExtra(CommonField.INTENT_CONTENT)) {
+                String from = intent.getStringExtra(CommonField.INTENT_FORM);
+                String content = intent.getStringExtra(CommonField.INTENT_CONTENT);
+                long time = intent.getLongExtra(CommonField.INTENT_TIME, 0);
+                if (time == 0){
+                    Timber.e("receive time error!");
+                    return;
+                }
+                mAdapter.update(from, content, time);
+            }
         }
     };
 
@@ -75,7 +83,7 @@ public final class ContactFragment extends Fragment {
         @Override
         public void onClick(View view, int position) {
             Intent intent = new Intent(getContext(), ChatActivity.class);
-            intent.putExtra(ChatActivity.FROM_ID, mContacts.get(position).user_id());
+            intent.putExtra(ChatActivity.FROM_ID, mData.get(position).chat().from_id());
             view.getContext().startActivity(intent);
         }
     };

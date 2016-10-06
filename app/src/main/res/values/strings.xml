@@ -19,6 +19,7 @@
     <string name="prompt_tab_me">我</string>
     <string name="prompt_tomorrow">昨天</string>
     <string name="prompt_inCoding">正在开发中</string>
+    <string name="prompt_noMoreChat">没有更多的信息了</string>
 
     <string name="action_cancle">cancle</string>
     <string name="action_confirm">sure</string>

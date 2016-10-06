@@ -1,4 +1,4 @@
-package com.github.ggggxiaolong.xmpp.chat;
+package com.github.ggggxiaolong.xmpp.main;
 
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;

@@ -1,4 +1,4 @@
-package com.github.ggggxiaolong.xmpp.chat;
+package com.github.ggggxiaolong.xmpp.main;
 
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
