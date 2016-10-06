@@ -23,8 +23,13 @@ public final class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHold
     }
 
     public void addData(Chat chat){
-        mData.add(chat);
-        notifyItemInserted(mData.size());
+        mData.add(0,chat);
+        notifyItemInserted(0);
+    }
+
+    void addData(@NonNull List<Chat> data){
+        mData.addAll(data);
+        notifyItemInserted(mData.size() -1);
     }
 
     @Override

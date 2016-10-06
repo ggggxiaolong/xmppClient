@@ -1,13 +1,10 @@
 package com.github.ggggxiaolong.xmpp.chat;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,31 +17,15 @@ import android.widget.Toast;
 
 import com.github.ggggxiaolong.xmpp.R;
 import com.github.ggggxiaolong.xmpp.datasource.model.Chat;
-import com.github.ggggxiaolong.xmpp.datasource.model.Contact;
-import com.github.ggggxiaolong.xmpp.datasource.model.ImmutableChat;
-import com.github.ggggxiaolong.xmpp.utils.CommonField;
-import com.github.ggggxiaolong.xmpp.utils.ThreadUtil;
-import com.github.ggggxiaolong.xmpp.utils.XMPPUtil;
+import com.sdsmdg.tastytoast.TastyToast;
 
-import org.jivesoftware.smack.SmackException;
-
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import timber.log.Timber;
 
-import static android.text.TextUtils.isEmpty;
-import static com.github.ggggxiaolong.xmpp.utils.CommonField.HOLDER_ME;
-import static com.github.ggggxiaolong.xmpp.utils.CommonField.HOLDER_OTHER;
-import static com.github.ggggxiaolong.xmpp.utils.CommonField.INTENT_CONTENT;
-import static com.github.ggggxiaolong.xmpp.utils.CommonField.INTENT_FORM;
-import static com.github.ggggxiaolong.xmpp.utils.CommonField.INTENT_HOLDER;
-import static com.github.ggggxiaolong.xmpp.utils.CommonField.INTENT_TIME;
-
-public class ChatActivity extends AppCompatActivity {
+public class ChatActivity extends AppCompatActivity implements ChatView {
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -60,12 +41,12 @@ public class ChatActivity extends AppCompatActivity {
     LinearLayout mActionPanel;
     @BindView(R.id.root)
     CoordinatorLayout mRoot;
+    @BindView(R.id.swipeReFreshLayout)
+    SwipeRefreshLayout mSwipeReFresh;
 
     public static final String FROM_ID = "ChatActivity.fromId";
-    private Contact mContact;
     private ChatAdapter mAdapter;
-    private LocalBroadcastManager mBroadcastManager;
-    private Intent mIntent;
+    private ChatPresenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +54,8 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
         ButterKnife.bind(this);
         init();
-        initData();
+        mPresenter.setFromId(getIntent().getStringExtra(FROM_ID));
+        mPresenter.onLoad();
     }
 
     /**
@@ -82,63 +64,40 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        initData();
+        mPresenter.setFromId(intent.getStringExtra(FROM_ID));
+        mPresenter.onLoad();
     }
 
     private void init() {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mBroadcastManager = LocalBroadcastManager.getInstance(getApplication());
-        mBroadcastManager.registerReceiver(mChatReceiver, new IntentFilter(CommonField.RECEIVER_CHAT));
+
         mAdapter = new ChatAdapter();
         mList.setAdapter(mAdapter);
-        mList.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        mIntent = new Intent(CommonField.RECEIVER_CHAT);
-    }
+        LinearLayoutManager layout = new LinearLayoutManager(getApplicationContext());
+        layout.setReverseLayout(true);
+        layout.setStackFromEnd(false);
+        mList.setLayoutManager(layout);
 
-    private void initData() {
-        String userId = getIntent().getStringExtra(FROM_ID);
-        if (isEmpty(userId)) {
-            Timber.e("userId is null!!!");
-            finish();
-        }
-        mContact = Contact.query(userId);
-        getSupportActionBar().setTitle(mContact.user_name());
-        List<Chat> chats = Chat.byFrom(userId);
-        mAdapter.setData(chats);
-        mAdapter.notifyDataSetChanged();
-        mList.scrollToPosition(mAdapter.getItemCount() - 1);
+        mSwipeReFresh.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+        mPresenter = new ChatPresenter();
+        mPresenter.onAttach(this);
+
+        mSwipeReFresh.setOnRefreshListener(() -> mPresenter.loadMore());
+
     }
 
     @OnClick(R.id.send)
     public void send() {
-        org.jivesoftware.smack.chat.Chat chat = XMPPUtil.getChat(mContact.user_id());
-        String text = "";
-        try {
-            text = mContent.getText().toString();
-            chat.sendMessage(text);
-        } catch (SmackException.NotConnectedException e) {
-            Timber.e(e);
-            Toast.makeText(getApplicationContext(), R.string.error_send, Toast.LENGTH_SHORT).show();
+        String content = mContent.getText().toString();
+        //虑空
+        if (content.trim().length() < 1) {
             return;
         }
-        mContent.setText("");
-        chat.getThreadID();
-        ImmutableChat chat1 = ImmutableChat.builder()
-                .from_id(mContact.user_id())
-                .content(text)
-                .holder(true)
-                .time(new Date().getTime()).build();
-        mAdapter.addData(chat1);
-        mList.scrollToPosition(mAdapter.getItemCount() - 1);
-        ThreadUtil.runONWorkThread(() -> {
-            Chat.insert(chat1);
-        });
-        mIntent.putExtra(INTENT_FORM, chat1.from_id());
-        mIntent.putExtra(INTENT_CONTENT, chat1.content());
-        mIntent.putExtra(INTENT_TIME, chat1.time());
-        mIntent.putExtra(INTENT_HOLDER, HOLDER_ME);
-        mBroadcastManager.sendBroadcast(mIntent);
+        mPresenter.send(content);
     }
 
     @Override
@@ -151,33 +110,56 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mBroadcastManager.unregisterReceiver(mChatReceiver);
+    public void loadDate(List<Chat> chats) {
+        mAdapter.setData(chats);
+        mAdapter.notifyDataSetChanged();
     }
 
-    private BroadcastReceiver mChatReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.hasExtra(CommonField.INTENT_FORM) && intent.hasExtra(CommonField.INTENT_CONTENT)) {
-                String from = intent.getStringExtra(CommonField.INTENT_FORM);
-                String content = intent.getStringExtra(CommonField.INTENT_CONTENT);
-                int holder = intent.getIntExtra(INTENT_HOLDER, 0);
-                mList.scrollToPosition(mAdapter.getItemCount() - 1);
-                if (holder != HOLDER_OTHER){
-                    return;
-                }
-                long time = intent.getLongExtra(CommonField.INTENT_TIME, -1);
-                if (time == -1) {
-                    time = new Date().getTime();
-                }
-                ImmutableChat chat1 = ImmutableChat.builder()
-                        .from_id(from)
-                        .content(content)
-                        .holder(false)
-                        .time(time).build();
-                mAdapter.addData(chat1);
-            }
-        }
-    };
+    @Override
+    public void setTitle(String title) {
+        getSupportActionBar().setTitle(title);
+    }
+
+    @Override
+    public void scrollToBottom() {
+        mList.scrollToPosition(0);
+    }
+
+    public void scrollTo(int size) {
+        mList.scrollToPosition(mAdapter.getItemCount() - size);
+    }
+
+    @Override
+    public void addData(Chat chat) {
+        mAdapter.addData(chat);
+        scrollToBottom();
+    }
+
+    @Override
+    public void addData(List<Chat> chats) {
+        mAdapter.addData(chats);
+        scrollTo(chats.size() - 3);
+    }
+
+    @Override
+    public void sendError() {
+        Toast.makeText(getApplicationContext(), R.string.error_send, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void sendSuccess() {
+        mContent.setText("");
+        scrollToBottom();
+    }
+
+    @Override
+    public void cancelRefresh() {
+        mSwipeReFresh.setRefreshing(false);
+    }
+
+    @Override
+    public void noMoreChat() {
+        TastyToast.makeText(getApplicationContext(),getString(R.string.prompt_noMoreChat), TastyToast.LENGTH_SHORT, TastyToast.DEFAULT);
+    }
+
 }

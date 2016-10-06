@@ -19,8 +19,9 @@ GROUP BY from_id;
 for_from_id:
 SELECT *
 FROM chat
-WHERE from_id = ?
-ORDER BY time ASC;
+WHERE from_id = ? AND time < ?
+ORDER BY time DESC
+LIMIT ? offset ?;
 
 delete_all:
 DELETE FROM chat;
