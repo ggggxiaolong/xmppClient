@@ -34,7 +34,7 @@ import static com.github.ggggxiaolong.xmpp.utils.CommonField.INTENT_TIME;
  * @author mrtan
  * @version v1.0
  * date 10/6/16
- * todo
+ * 增加-----
  * 判断是否还有数据
  */
 
