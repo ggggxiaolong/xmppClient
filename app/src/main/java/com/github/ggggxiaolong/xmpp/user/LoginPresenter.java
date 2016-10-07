@@ -63,22 +63,10 @@ final class LoginPresenter extends BasePresenter<LoginView> {
         mConnectionListener = null;
     }
 
-    private void save() {
-        ThreadUtil.runONWorkThread(() -> {
-            PreferencesUtils.getEditor()
-                    .putString(CommonField.USER_PASSWORD, mPassword)
-                    .putString(CommonField.USER_NAME, mUsername)
-                    .apply();
-            ObjectHolder.XMPP_ID = mUsername + "@" + PreferencesUtils.getString(CommonField.SERVER_NAME) + "/android";
-        });
-    }
-
     private ConnectionListener mConnectionListener = new XMPPUtil.ConnectionListenerWrapper() {
         @Override
         public void authenticated(XMPPConnection connection, boolean resumed) {
-            save();
             ThreadUtil.runOnUIThread(() -> {
-                save();
                 mView.loginSuccess();
             });
         }

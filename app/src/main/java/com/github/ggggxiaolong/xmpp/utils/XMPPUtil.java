@@ -202,7 +202,13 @@ public final class XMPPUtil {
         if (!isConnected()) {
             throw new RuntimeException("call the connect first!");
         }
+        Timber.i("login-- username: %s, password: %s", userName, password);
         connection.login(userName, password, "android");
+        PreferencesUtils.getEditor()
+                .putString(CommonField.USER_NAME, userName)
+                .putString(CommonField.USER_PASSWORD, password)
+                .apply();
+        ObjectHolder.XMPP_ID = userName + "@" + PreferencesUtils.getString(CommonField.SERVER_NAME) + "/android";
         init();
         Timber.i("login success");
     }
@@ -225,6 +231,7 @@ public final class XMPPUtil {
                 return false;
             }
         }
+        Timber.e("login fail");
         return false;
     }
 
