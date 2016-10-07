@@ -42,6 +42,10 @@ final class SessionAdapter extends RecyclerView.Adapter<SessionAdapter.ViewHolde
         }
     }
 
+    Chat.Session getItem(int position){
+        return mData.get(position);
+    }
+
     void update(final String from, String content, long time) {
         int position = mMapping.indexOf(from);
         Timber.i("add fromId: %s, position: %s", from, position);

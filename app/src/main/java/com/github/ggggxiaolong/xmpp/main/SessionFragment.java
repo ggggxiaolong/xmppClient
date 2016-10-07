@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import com.github.ggggxiaolong.xmpp.R;
 import com.github.ggggxiaolong.xmpp.chat.ChatActivity;
 import com.github.ggggxiaolong.xmpp.datasource.model.Chat;
+import com.github.ggggxiaolong.xmpp.datasource.model.Contact;
 import com.github.ggggxiaolong.xmpp.utils.CommonField;
 import com.github.ggggxiaolong.xmpp.utils.ObjectHolder;
 
@@ -43,7 +44,8 @@ public final class SessionFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         mBroadcastManager = ObjectHolder.getBroadcastManager();
-        mBroadcastManager.registerReceiver(mContactReceiver, new IntentFilter(CommonField.RECEIVER_CHAT));
+        mBroadcastManager.registerReceiver(mChatReceiver, new IntentFilter(CommonField.RECEIVER_CHAT));
+        mBroadcastManager.registerReceiver(mContactReceiver, new IntentFilter(CommonField.RECEIVER_CONTACT));
     }
 
     private void initData(Context ctx) {
@@ -58,11 +60,12 @@ public final class SessionFragment extends Fragment {
 
     @Override
     public void onDetach() {
+        mBroadcastManager.unregisterReceiver(mChatReceiver);
         mBroadcastManager.unregisterReceiver(mContactReceiver);
         super.onDetach();
     }
 
-    private BroadcastReceiver mContactReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver mChatReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -79,11 +82,21 @@ public final class SessionFragment extends Fragment {
         }
     };
 
+    private BroadcastReceiver mContactReceiver = new BroadcastReceiver(){
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            mData = Chat.getContextChat();
+            mAdapter.setData(mData);
+            mAdapter.notifyDataSetChanged();
+        }
+    };
+
     private Listener.OnItemClickListener mItemClickListener = new Listener.OnItemClickListener() {
         @Override
         public void onClick(View view, int position) {
             Intent intent = new Intent(getContext(), ChatActivity.class);
-            intent.putExtra(ChatActivity.FROM_ID, mData.get(position).chat().from_id());
+            intent.putExtra(ChatActivity.FROM_ID, mAdapter.getItem(position).chat().from_id());
             view.getContext().startActivity(intent);
         }
     };
