@@ -33,16 +33,15 @@ import static com.github.ggggxiaolong.xmpp.utils.CommonField.INTENT_TIME;
 /**
  * @author mrtan
  * @version v1.0
- * date 10/6/16
- * 增加-----
- * 判断是否还有数据
+ *          date 10/6/16
+ *          增加-----
+ *          判断是否还有数据
  */
 
 final class ChatPresenter extends BasePresenter<ChatView> {
     private String fromId;
     private LocalBroadcastManager mBroadcastManager;
     private Intent mIntent;
-    private int pager = 0;
     private long lastTime;
 
     @Override
@@ -53,40 +52,43 @@ final class ChatPresenter extends BasePresenter<ChatView> {
         mIntent = new Intent(CommonField.RECEIVER_CHAT);
     }
 
-    void setFromId(String from){
+    void setFromId(String from) {
         fromId = from;
         check();
     }
 
-    void onLoad(){
+    void onLoad() {
         check();
-        pager = 0;
         Contact mContact = Contact.query(fromId);
         mView.setTitle(mContact.user_name());
-        List<Chat> chats = Chat.byFrom(fromId, pager++, new Date().getTime());
+        List<Chat> chats = Chat.byFrom(fromId, 0, new Date().getTime());
         mView.loadDate(chats);
-        lastTime = chats.get(chats.size()-1).time();
+        if (chats.size() < 1) {
+            lastTime = new Date().getTime();
+        } else {
+            lastTime = chats.get(chats.size() - 1).time();
+        }
     }
 
-    void loadMore(){
+    void loadMore() {
         if (!Chat.hasMore(fromId, lastTime)) {
             mView.noMoreChat();
             mView.cancelRefresh();
             return;
         }
-        List<Chat> chats = Chat.byFrom(fromId, pager++, lastTime);
-        lastTime = chats.get(chats.size()-1).time();
+        List<Chat> chats = Chat.byFrom(fromId, 0, lastTime);
+        lastTime = chats.get(chats.size() - 1).time();
         mView.addData(chats);
         mView.cancelRefresh();
     }
 
-    private void check(){
-        if (isEmpty(fromId)){
+    private void check() {
+        if (isEmpty(fromId)) {
             throw new RuntimeException("set the fromId first!");
         }
     }
 
-    void send(String content){
+    void send(String content) {
         check();
         org.jivesoftware.smack.chat.Chat chat = XMPPUtil.getChat(fromId);
         try {
@@ -126,7 +128,7 @@ final class ChatPresenter extends BasePresenter<ChatView> {
                 String from = intent.getStringExtra(CommonField.INTENT_FORM);
                 String content = intent.getStringExtra(CommonField.INTENT_CONTENT);
                 int holder = intent.getIntExtra(INTENT_HOLDER, 0);
-                if (holder != HOLDER_OTHER){
+                if (holder != HOLDER_OTHER) {
                     mView.scrollToBottom();
                     return;
                 }
