@@ -138,7 +138,11 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
     @Override
     public void addData(List<Chat> chats) {
         mAdapter.addData(chats);
-        scrollTo(chats.size() - 3);
+        if (chats.size() < 5) {
+            scrollTo(1);
+        } else {
+            scrollTo(chats.size() - 3);
+        }
     }
 
     @Override
@@ -159,7 +163,7 @@ public class ChatActivity extends AppCompatActivity implements ChatView {
 
     @Override
     public void noMoreChat() {
-        TastyToast.makeText(getApplicationContext(),getString(R.string.prompt_noMoreChat), TastyToast.LENGTH_SHORT, TastyToast.DEFAULT);
+        TastyToast.makeText(getApplicationContext(), getString(R.string.prompt_noMoreChat), TastyToast.LENGTH_SHORT, TastyToast.DEFAULT);
     }
 
 }
