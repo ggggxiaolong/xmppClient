@@ -13,7 +13,7 @@ import com.github.ggggxiaolong.xmpp.utils.ObjectHolder;
  */
 
 final class MainPagerAdapter extends FragmentStatePagerAdapter {
-    private static int[] icons = new int[]{R.drawable.ic_tab_chat,R.drawable.ic_tab_contact,R.drawable.ic_tab_found,R.drawable.ic_tab_me};
+    private static int[] icons = new int[]{R.drawable.selector_tab_chat,R.drawable.selector_tab_contact,R.drawable.selector_tab_found,R.drawable.selector_tab_me};
     private static int[] title = new int[]{R.string.prompt_tab_chat,R.string.prompt_tab_contact,R.string.prompt_tab_found,R.string.prompt_tab_me};
 
     MainPagerAdapter(FragmentManager fm) {
